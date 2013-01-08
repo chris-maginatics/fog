@@ -50,18 +50,8 @@ module Fog
     end
 
     def wait_for(timeout=Fog.timeout, interval=1, &block)
-      reload
-      retries = 3
       Fog.wait_for(timeout, interval) do
-        if reload
-          retries = 3
-        elsif retries > 0
-          retries -= 1
-          sleep(1)
-        elsif retries == 0
-          raise Fog::Errors::Error.new("Reload failed, #{self.class} #{self.identity} went away.")
-        end
-        instance_eval(&block)
+        reload && instance_eval(&block)
       end
     end
 
